@@ -1,3 +1,31 @@
-spring: 
-  application: 
+spring:
+  application:
     name: record-and-category-service
+  cloud:
+    config:
+      uri: ${SPRING_CLOUD_CONFIG_URI}
+  config:
+    import: ${SPRING_CONFIG_IMPORT}
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format-sql: true
+  zipkin:
+    enabled: false
+    base-url: http://zipkin:9411
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+
+app:
+  jwtSecret: ${APP_JWT_SECRET}
+  applicationSignature: ${APP_APPLICATION_SIGNATURE}
