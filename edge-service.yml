@@ -1,3 +1,76 @@
-spring: 
-  application: 
+spring:
+  application:
     name: edge-service
+  cloud:
+    config:
+      uri: ${SPRING_CLOUD_CONFIG_URI}
+    gateway:
+      routes:
+        - id: USER-AND-ACCOUNT-SERVICE
+          uri: lb://USER-AND-ACCOUNT-SERVICE
+          predicates:
+            - Path=/api/v1/users/**,/api/v1/auth/**
+          filters:
+            - StripPrefix=0
+
+        - id: record-and-category-service
+          uri: lb://RECORD-AND-CATEGORY-SERVICE
+          predicates:
+            - Path=/api/v1/records/**,/api/v1/categories/**
+          filters:
+            - StripPrefix=0
+
+        - id: budget-and-analytics-service
+          uri: lb://BUDGET-AND-ANALYTICS-SERVICE
+          predicates:
+            - Path=/api/v1/budgets/**,/api/v1/analytics/**
+          filters:
+            - StripPrefix=0
+
+  config:
+    import: ${SPRING_CONFIG_IMPORT}
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: email,profile
+            redirect-uri: ${GOOGLE_REDIRECT_URI}
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v2/userinfo
+            user-name-attribute: email
+    user:
+      name: ${SPRING_SECURITY_USER_NAME}
+      password: ${SPRING_SECURITY_USER_PASSWORD}
+  zipkin:
+    enabled: false
+    base-url: http://zipkin:9411
+
+app:
+  jwtSecret: ${APP_JWT_SECRET}
+  applicationSignature: ${APP_APPLICATION_SIGNATURE}
+  accessTokenExpirationTime: ${APP_ACCESS_TOKEN_EXPIRATION_TIME}
+  refreshTokenExpirationTime: ${APP_REFRESH_TOKEN_EXPIRATION_TIME}
+  cookie:
+    secure: ${APP_COOKIE_SECURE}
+    httpOnly: ${APP_COOKIE_HTTPONLY}
+    sameSite: ${APP_COOKIE_SAMESITE}
+    domain: ${APP_COOKIE_DOMAIN}
+    path:
+      accessToken: ${APP_COOKIE_PATH_ACCESS_TOKEN}
+      refreshToken: ${APP_COOKIE_PATH_REFRESH_TOKEN}
+  frontend:
+    url: ${APP_FRONTEND_URL}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE}
+  instance:
+    status-page-url-path: /actuator/info
+    health-check-url-path: /actuator/health
