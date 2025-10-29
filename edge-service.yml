@@ -24,9 +24,6 @@ spring:
             - Path=/api/v1/budgets/**,/api/v1/analytics/**
           filters:
             - StripPrefix=0
-
-  config:
-    import: ${SPRING_CONFIG_IMPORT}
   security:
     oauth2:
       client:
